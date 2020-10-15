@@ -1,0 +1,19 @@
+--1. 123.45678을 소수점 세번째 자리에서 반올림하시오.
+SELECT ROUND(123.456,3)
+FROM DUAL;
+
+--2. 123.456을 반 올림하여 정수로 만드시오.
+SELECT ROUND(123.456,0)
+FROM DUAL;
+
+--3. 123.456을 소수 첫째자리까지만 남기고 버리시오.
+SELECT TRUNC(123.456,1)
+FROM DUAL;
+
+--4. 100을 11로 나눈 나머지를 구하시오.
+SELECT MOD(100,11)
+FROM DUAL;
+
+--5. EMP의 연봉을 1000으로 나눈뒤 그 나머지를 출력하시오.
+SELECT MOD(SAL*12+NVL(COMM,0),1000)
+FROM EMP;
