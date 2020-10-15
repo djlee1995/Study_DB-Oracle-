@@ -48,7 +48,11 @@ where sal>1000 and sal<3000 order by sal desc;
 10. 급여가 1000이하 또는 3000 이상의 직원 검색하기.(급여 내림차순)
 select *
 from emp
-where sal<1000 or sal>3000 order by sal desc;
+where sal<=1000 or sal>=3000 order by sal desc;
+
+select *
+from emp
+where not (sal>1000 and sal<3000) order by sal desc;
 
 11. 직급(job)이 MANAGER 또는 SALESMAN인 직원들을 이름순으로 조회하시오.
 select *
@@ -62,7 +66,7 @@ from emp
 where deptno='30';
 
 13. emp 테이블에서 중복된 부서코드를 한개씩만 조회하시오.
-select distinct deptno
+select distinct (deptno)
 from emp
 
 14. 부서코드가 10 또는 20 또는 30인 직원을 조회하시오.(or, in연산자 각각 활용해서 조회)
@@ -78,10 +82,12 @@ where deptno in(10,20,30) ;
 select *
 from emp
 where sal>=1000 and sal<=3000;
+order by sal asc;
 
 select *
 from emp
 where sal between 1000 and 3000;
+order by sal asc;
 
 16. 이름이 SCOTT인 사원을 조회하시오.
 select *
