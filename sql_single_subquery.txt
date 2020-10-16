@@ -1,0 +1,42 @@
+--1. SCOTT과 같은 부서에서 근무하는 사원의 이름과 부서 번호를 출력하는
+--SQL 문을 작성해 보시오. 
+SELECT ENAME,DEPTNO
+FROM EMP
+WHERE DEPTNO=(SELECT DEPTNO
+                FROM EMP
+                WHERE ENAME='SCOTT')
+AND ENAME <> 'SCOTT';
+--2. SCOTT와 동일한 직급을 가진 사원을 출력하는 SQL 문을 작성해 보시오.                 
+SELECT *
+FROM EMP
+WHERE JOB = (SELECT JOB
+                FROM EMP
+                WHERE ENAME='SCOTT')
+AND ENAME <> 'SCOTT';
+--3. SCOTT의 급여와 동일하거나 더 많이 받는 사원 명과 급여를 출력하시오.
+
+SELECT ENAME,SAL
+FROM EMP
+WHERE SAL >= (SELECT SAL
+                FROM EMP
+                WHERE ENAME='SCOTT')
+
+AND ENAME <> 'SCOTT';
+--4. DALLAS에서 근무하는 사원의 이름, 부서 번호를 출력하시오. 
+SELECT ENAME,DEPTNO
+FROM EMP
+WHERE DEPTNO = (SELECT DEPTNO
+                FROM DEPT
+                WHERE LOC='DALLAS');
+--5. SALES(영업부) 부서에서 근무하는 모든 사원의 이름과 급여를 출력하시오.
+SELECT ENAME,SAL
+FROM EMP
+WHERE DEPTNO = (SELECT DEPTNO
+                FROM DEPT
+                WHERE DNAME='SALES');
+--6. 직속상관이 KING인 사원의 이름과 급여를 출력하시오. 
+SELECT ENAME,SAL
+FROM EMP
+WHERE MGR = (SELECT EMPNO
+                FROM EMP
+                WHERE ENAME='KING');
