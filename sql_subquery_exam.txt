@@ -1,0 +1,110 @@
+--######### subquery #########
+--1. DEPT Table 에는 존재하는 부서코드이지만 해당부서에 근무하는 사람이 존재하지 않는 경우의 결과를 출력하시오.
+SELECT *
+FROM DEPT
+WHERE DEPTNO NOT IN(SELECT DEPTNO
+                    FROM EMP
+                    GROUP BY DEPTNO
+                    HAVING COUNT(*)>0);
+
+SELECT *
+FROM DEPT
+WHERE DEPTNO NOT IN(SELECT DISTINCT DEPTNO
+                    FROM EMP);
+                    
+SELECT * 
+FROM DEPT
+WHERE DEPTNO != ALL(SELECT DEPTNO FROM EMP);
+
+--2. 'ALLEN'의 직무와 같은 사람의 이름, 부서명, 급여, 직무를 출력하시오.
+SELECT E.ENAME,D.DNAME,E.SAL,E.JOB
+FROM EMP E,DEPT D
+WHERE E.DEPTNO =D.DEPTNO 
+AND E.JOB = (SELECT JOB 
+             FROM EMP 
+             WHERE NAME ='ALLEN');
+             
+--3. 'JONES'가 속해있는 부서의 모든 사람의 사원번호, 이름, 입사일자, 급여를 출력하시오.
+SELECT EMPNO,ENAME,HIREDATE,SAL
+FROM EMP
+WHERE DEPTNO = (SELECT DEPTNO
+                 FROM EMP
+                 WHERE ENAME='JONES');
+                 
+--4. 전체 사원의 평균 임금보다 많은 사원의 사원번호, 이름, 부서명, 입사일, 지역, 급여를 출력하시오.
+SELECT EMPNO,ENAME,HIREDATE,SAL
+FROM EMP
+WHERE SAL > (SELECT AVG(SAL)
+                 FROM EMP);
+                 
+--5. 10번 부서 사람들 중에서 20번 부서의 사원과 같은 업무를 하는 사원의 사원번호, 이름, 부서명, 입사일, 지역을 출력하시오.
+SELECT E.EMPNO,E.ENAME,D.DNAME,E.HIREDATE,D.LOC,e.JOB
+FROM EMP E,DEPT D
+WHERE E.DEPTNO =D.DEPTNO 
+AND E.DEPTNO=10 
+AND E.JOB IN (SELECT DISTINCT JOB 
+              FROM EMP 
+              WHERE DEPTNO ='20');
+             
+--6. 10번 부서 중에서 30번 부서에는 없는 업무를 하는 사원의 사원번호, 이름, 부서명, 입사일자, 지역을 출력하시오.
+SELECT E.EMPNO, E.ENAME,D.DNAME,E.HIREDATE,D.LOC,E.JOB
+FROM EMP E,DEPT D
+WHERE E.DEPTNO =D.DEPTNO 
+AND E.DEPTNO=10 
+AND E.JOB NOT IN (SELECT DISTINCT JOB 
+              FROM EMP 
+              WHERE DEPTNO ='30');
+              
+--7. 'MARTIN'이나 'SCOTT'의 급여와 같은 사원의 사원번호, 이름, 급여를 출력하시오.
+SELECT EMPNO,ENAME,SAL
+FROM EMP
+WHERE SAL IN (SELECT SAL
+                FROM EMP
+                WHERE ENAME IN('MARTIN','SCOTT'))
+AND ENAME<>'MARTIN'AND ENAME<>'SCOTT';
+
+--8. 30번 부서의 사원중에서 급여를 가장 많이 받는 사원보다 더 많은 급여를 받는 사원의 이름과 급여를 출력하시오.
+SELECT ENAME,SAL
+FROM EMP
+WHERE SAL>ALL(SELECT SAL
+                FROM EMP
+                WHERE DEPTNO='30');
+                
+SELECT ENAME,SAL
+FROM EMP
+WHERE SAL>(SELECT MAX(SAL)
+                FROM EMP
+                WHERE DEPTNO='30');
+--9. 부서번호가 30번인 사원들의 급여중 최저 급여보다 높은 급여를 받는 사원의 이름, 급여를 출력하시오.
+SELECT ENAME,SAL
+FROM EMP
+WHERE SAL>ANY(SELECT SAL
+                FROM EMP
+                WHERE DEPTNO='30');
+                
+SELECT ENAME,SAL
+FROM EMP
+WHERE SAL>(SELECT MIN(SAL)
+                FROM EMP
+                WHERE DEPTNO='30');
+                                
+--10. 'DALLAS' 에서 근무하는 사원의 이름, 부서번호를 출력하시오.
+SELECT ENAME,DEPTNO
+FROM EMP
+WHERE DEPTNO = (SELECT DEPTNO
+                 FROM DEPT
+                 WHERE LOC='DALLAS');
+                 
+--11. 급여를 3000 이상받는 사원이 소속된 부서와 동일한 부서에서 근무하는 사원들의 이름과 급여, 부서번호를 출력하시오.
+SELECT ENAME,SAL,DEPTNO
+FROM EMP
+WHERE DEPTNO IN (SELECT DEPTNO
+                 FROM EMP
+                 WHERE SAL>=3000);
+                 
+--12. IN 연산자를 이용하여 부서별로 가장 급여를 많이 받는 사원의 사원번호, 급여, 부서번호를 출력하시오.
+SELECT ENAME,SAL,DEPTNO
+FROM EMP
+WHERE SAL IN (SELECT MAX(SAL)
+                 FROM EMP
+                 GROUP BY DEPTNO);
