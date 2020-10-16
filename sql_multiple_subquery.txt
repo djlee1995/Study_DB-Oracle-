@@ -1,0 +1,15 @@
+--7. 부서별로 가장 급여를 많이 받는 사원의 정보(사원 번호, 사원이름, 급여, 부
+--서번호)를 출력하시오.(IN 연산자 이용)
+SELECT EMPNO,ENAME,SAL,DEPTNO
+FROM EMP
+WHERE SAL IN (SELECT MAX(SAL)
+                    FROM EMP
+                    GROUP BY DEPTNO);
+                    
+--8. 직급(JOB)이 MANAGER인 사람의 속한 부서의 부서 번호와 부서명과 지역
+--을 출력하시오.
+SELECT DEPTNO,DNAME,LOC
+FROM DEPT
+WHERE DEPTNO IN (SELECT DEPTNO
+                    FROM EMP
+                    WHERE JOB='MANAGER');
