@@ -1,0 +1,127 @@
+DECLARE
+VEMPNO EMP.EMPNO%TYPE;
+VENAME EMP.ENAME%TYPE;
+BEGIN
+DBMS_OUTPUT.PUT_LINE('사번/이름');
+DBMS_OUTPUT.PUT_LINE('----------');
+
+SELECT EMPNO, ENAME INTO VEMPNO, VENAME
+FROM EMP
+WHERE ENAME='SCOTT'; 
+
+DBMS_OUTPUT.PUT_LINE(VEMPNO || '/' || VENAME);
+END;
+/
+
+DECLARE
+ -- 테이블 타입을 정의
+ TYPE ENAME_TABLE_TYPE IS TABLE OF EMP.ENAME%TYPE
+ INDEX BY BINARY_INTEGER;
+ TYPE JOB_TABLE_TYPE IS TABLE OF EMP.JOB%TYPE
+ INDEX BY BINARY_INTEGER;
+ -- 테이블 타입으로 변수 선언
+ ENAME_TABLE ENAME_TABLE_TYPE;
+ JOB_TABLE JOB_TABLE_TYPE;
+
+ I BINARY_INTEGER := 0;
+ BEGIN
+ -- EMP 테이블에서 사원이름과 직급을 얻어옴
+ FOR K IN (SELECT ENAME, JOB FROM EMP) LOOP
+ I := I + 1; --인덱스 증가
+ ENAME_TABLE(I) := K.ENAME; --사원이름과
+ JOB_TABLE(I) := K.JOB; --직급을 저장.
+ END LOOP;
+
+ --테이블에 저장된 내용을 출력
+ FOR J IN 1..I LOOP
+ DBMS_OUTPUT.PUT_LINE(RPAD(ENAME_TABLE(J),12)
+ || ' / ' || RPAD(JOB_TABLE(J),9));
+ END LOOP;
+END;
+/ 
+----------EMP TABLE 로 만든 PL/SQL
+DECLARE
+ -- 레코드 타입을 정의
+ TYPE emp_record_type IS RECORD(
+ v_empno emp.empno%TYPE,
+ v_ename emp.ename%TYPE,
+ v_job emp.job%TYPE,
+ v_deptno emp.deptno%TYPE);
+ -- 레코드로 변수 선언
+ emp_record emp_record_type;
+ BEGIN
+ -- SCOTT 사원의 정보를 레코드 변수에 저장
+ SELECT empno,ename, job, deptno
+ INTO emp_record
+ FROM emp
+ WHERE ename = UPPER('SCOTT');
+
+ -- 레코드 변수에 저장된 사원 정보를 출력
+ DBMS_OUTPUT.PUT_LINE('사원번호 : ' ||
+ TO_CHAR(emp_record.v_empno));
+ DBMS_OUTPUT.PUT_LINE('이 름: ' ||
+ emp_record.v_ename);
+ DBMS_OUTPUT.PUT_LINE('담당업무 : ' ||
+ emp_record.v_job);
+ DBMS_OUTPUT.PUT_LINE('부서번호 : ' ||
+ TO_CHAR(emp_record.v_deptno));
+END;
+/
+----------DEPT TABLE 로 만든 PL/SQL
+DECLARE
+ -- 레코드 타입을 정의
+ TYPE dept_record_type IS RECORD(
+ v_deptno dept.deptno%TYPE,
+ v_dname dept.dname%TYPE,
+ v_loc dept.loc%TYPE);
+ -- 레코드로 변수 선언
+ dept_record dept_record_type;
+ BEGIN
+ -- SCOTT 사원의 정보를 레코드 변수에 저장
+ SELECT deptno,dname,loc
+ INTO dept_record
+ FROM dept
+ WHERE deptno=10;
+
+ -- 레코드 변수에 저장된 사원 정보를 출력
+ DBMS_OUTPUT.PUT_LINE('부서번호 : ' ||
+ TO_CHAR(dept_record.v_deptno));
+ DBMS_OUTPUT.PUT_LINE('부서: ' ||
+ dept_record.v_dname);
+ DBMS_OUTPUT.PUT_LINE('지역 : ' ||
+ dept_record.v_loc);
+
+END;
+/
+-------조인을 이용해서 EMP,DEPT TABLE 로 만든 PL/SQL
+DECLARE
+ -- 레코드 타입을 정의
+ TYPE emp_dept_record_type IS RECORD(
+ v_empno emp.empno%TYPE,
+ v_ename emp.ename%TYPE,
+ v_job emp.job%TYPE,
+ v_deptno emp.deptno%TYPE,
+ v_dname dept.dname%TYPE);
+ -- 레코드로 변수 선언
+ emp_dept_record emp_dept_record_type;
+ BEGIN
+ -- SCOTT 사원의 정보를 레코드 변수에 저장
+ SELECT e.empno,e.ename, e.job, e.deptno,d.dname
+ INTO emp_dept_record
+ FROM emp e,dept d
+ WHERE e.deptno=d.deptno 
+ and ename = UPPER('SCOTT');
+
+ -- 레코드 변수에 저장된 사원 정보를 출력
+ DBMS_OUTPUT.PUT_LINE('사원번호 : ' ||
+ TO_CHAR(emp_dept_record.v_empno));
+ DBMS_OUTPUT.PUT_LINE('이 름: ' ||
+ emp_dept_record.v_ename);
+ DBMS_OUTPUT.PUT_LINE('담당업무 : ' ||
+ emp_dept_record.v_job);
+ DBMS_OUTPUT.PUT_LINE('부서번호 : ' ||
+ TO_CHAR(emp_dept_record.v_deptno));
+ DBMS_OUTPUT.PUT_LINE('부서명 : ' ||
+ emp_dept_record.v_dname);
+END;
+/
